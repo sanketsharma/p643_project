@@ -29,6 +29,7 @@ std::map<std::string, std::string> getConfigValues(const std::string& fname)
 int main()
 {
     el::Configurations conf("../config/logging.cfg");
+    el::Loggers::reconfigureLogger("default", conf);
     auto configValues = getConfigValues("../config/params.cfg");
     LOG(INFO) << "Starting simulation" ;
     p643::simulate(configValues);
