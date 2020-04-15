@@ -1,8 +1,8 @@
 #include <interpolation.h>
 #include <cmath>
 #include <numeric>
+#include <easylogging++.h>
 
-#include <iostream> //TODO::
 
 namespace p643
 {
@@ -52,11 +52,11 @@ bool isCorner(const int maxIndexMagnitude, Index point)
 
     unsigned count = 0;
 
-    if(x == maxIndexMagnitude || x == -maxIndexMagnitude)
+    if(x == maxIndexMagnitude || x == -1 * maxIndexMagnitude)
     {
-        if(y == maxIndexMagnitude || y == -maxIndexMagnitude)
+        if(y == maxIndexMagnitude || y == -1 * maxIndexMagnitude)
         {
-            if(z == maxIndexMagnitude || z == -maxIndexMagnitude)
+            if(z == maxIndexMagnitude || z == -1 * maxIndexMagnitude)
             {
                 return true;
             }
@@ -252,7 +252,8 @@ interpolateToGrid(const unsigned maxIndexMagnitude, const double beta, const dou
         double c = 0.0;
         unsigned whichExternalPoint = 4; //0 => x, 1 => y, 2 => z, 3 => is a corner point
         auto stencil = getStencilOutsidePoint(maxIndexMagnitude, vxNormalized, vyNormalized, vzNormalized, location, a, b, c, whichExternalPoint);
-        if(whichExternalPoint =! 3) //Ignoring when origin is a corner point 
+
+        if(whichExternalPoint != 3) //Ignoring when origin is a corner point 
         {
             const Index origin = stencil[0];
             const Index ix = stencil[1];
