@@ -25,6 +25,37 @@ void replenish(Cell& cell, const std::map<Index, double>& replenishmentFractions
     }
 }
 
+void processCollisions(Cell& cell, const std::vector<Index> mj, 
+                        PostCollisionVelocitiesGenerator& postCollisionVelocitiesGenerator, 
+                        const std::array<double, 3> eta, 
+                        const Index& etaIHat, 
+                        const Index& zetaIHat, 
+                        double beta, 
+                        double deltaT)
+{
+    int velocityGridSide = cell.distributionFunctionGrid.size();
+    const double depletion = p643::collisionDepletion(cell.distributionFunctionGrid, mj, etaIHat, zetaIHat, beta, deltaT);
+    const double zetaX = p643::Cell::getVelocity(beta, std::get<0>(zetaIHat));
+    const double zetaY = p643::Cell::getVelocity(beta, std::get<1>(zetaIHat));
+    const double zetaZ = p643::Cell::getVelocity(beta, std::get<2>(zetaIHat));
+    const std::array<double, 3> zeta{{zetaX, zetaY, zetaZ}};
+
+    const auto postCollisionVelocities = postCollisionVelocitiesGenerator.getPostCollisionVelocities(eta, zeta);
+    const double etaPrimeX = postCollisionVelocities[0];
+    const double etaPrimeY = postCollisionVelocities[1];
+    const double etaPrimeZ = postCollisionVelocities[2];
+    auto replishmentFractionsEta = interpolateToGrid(velocityGridSide, beta, etaPrimeX, etaPrimeY, etaPrimeZ);
+    const double replenishmentEta = depletion/2;
+    replenish(cell, replishmentFractionsEta, replenishmentEta, velocityGridSide); 
+
+    const double zetaPrimeX = postCollisionVelocities[3];
+    const double zetaPrimeY = postCollisionVelocities[4];
+    const double zetaPrimeZ = postCollisionVelocities[5];
+    auto replishmentFractionsZeta = interpolateToGrid(velocityGridSide, beta, zetaPrimeX, zetaPrimeY, zetaPrimeZ);
+    const double replenishmentZeta = depletion/2;
+    replenish(cell, replishmentFractionsZeta, replenishmentZeta, velocityGridSide);
+}
+
 void simulate(const std::map<std::string, std::string>& configValues)
 {
     const double k = std::stod(configValues.at("k"));
@@ -74,26 +105,7 @@ void simulate(const std::map<std::string, std::string>& configValues)
 
                                 for(auto zetaIHat :  mj)
                                 {
-                                    const double depletion = p643::collisionDepletion(cell.distributionFunctionGrid, mj, etaIHat, zetaIHat, beta, deltaT);
-                                    const double zetaX = p643::Cell::getVelocity(beta, std::get<0>(zetaIHat));
-                                    const double zetaY = p643::Cell::getVelocity(beta, std::get<1>(zetaIHat));
-                                    const double zetaZ = p643::Cell::getVelocity(beta, std::get<2>(zetaIHat));
-                                    const std::array<double, 3> zeta{{zetaX, zetaY, zetaZ}};
-
-                                    const auto postCollisionVelocities = postCollisionVelocitiesGenerator.getPostCollisionVelocities(eta, zeta);
-                                    const double etaPrimeX = postCollisionVelocities[0];
-                                    const double etaPrimeY = postCollisionVelocities[1];
-                                    const double etaPrimeZ = postCollisionVelocities[2];
-                                    auto replishmentFractionsEta = interpolateToGrid(velocityGridSide, beta, etaPrimeX, etaPrimeY, etaPrimeZ);
-                                    const double replenishmentEta = depletion/2;
-                                    replenish(cell, replishmentFractionsEta, replenishmentEta, velocityGridSide); 
-
-                                    const double zetaPrimeX = postCollisionVelocities[3];
-                                    const double zetaPrimeY = postCollisionVelocities[4];
-                                    const double zetaPrimeZ = postCollisionVelocities[5];
-                                    auto replishmentFractionsZeta = interpolateToGrid(velocityGridSide, beta, zetaPrimeX, zetaPrimeY, zetaPrimeZ);
-                                    const double replenishmentZeta = depletion/2;
-                                    replenish(cell, replishmentFractionsZeta, replenishmentZeta, velocityGridSide);
+                                    processCollisions(cell, mj, postCollisionVelocitiesGenerator, eta, etaIHat, zetaIHat, beta, deltaT);
                                 }
                             }
                         }
