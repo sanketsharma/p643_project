@@ -6,6 +6,7 @@
 #include <CollisionPartnersGenerator.h>
 #include <PostCollisionVelocitiesGenerator.h>
 #include <simulate.h>
+#include <easylogging++.h>
 
 namespace p643
 {
@@ -34,11 +35,11 @@ void simulate(const std::map<std::string, std::string>& configValues)
     double deltaT = std::stod(configValues.at("deltaT"));
     for(unsigned step = 0 ; step < 100; ++step)
     {
-        for(unsigned p = 0; p < gridX ; ++p)
+        for(int p = 0; p < gridX ; ++p)
         {
-            for(unsigned q = 0; q < gridY; ++q)
+            for(int q = 0; q < gridY; ++q)
             {
-                for(unsigned r = 0; r < gridZ; ++r)
+                for(int r = 0; r < gridZ; ++r)
                 {
                     const auto& cell = grid.myGrid[p][q][r];
                     p643::CollisionPartnersGenerator collisionPartnersGenerator(cell);
@@ -68,10 +69,12 @@ void simulate(const std::map<std::string, std::string>& configValues)
                                     const double etaPrimeX = postCollisionVelocities[0];
                                     const double etaPrimeY = postCollisionVelocities[1];
                                     const double etaPrimeZ = postCollisionVelocities[2];
+                                    LOG(DEBUG) << "(" << etaPrimeX << "," << etaPrimeY << "," << etaPrimeZ  << ")";
 
                                     const double zetaPrimeX = postCollisionVelocities[3];
                                     const double zetaPrimeY = postCollisionVelocities[4];
                                     const double zetaPrimeZ = postCollisionVelocities[5];
+                                    LOG(DEBUG) << "(" << zetaPrimeX << "," << zetaPrimeY << "," << zetaPrimeZ << ")";
                                 }
                             }
                         }

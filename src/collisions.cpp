@@ -26,7 +26,7 @@ namespace p643
         const unsigned i = std::get<0>(zetaIHat);
         const unsigned j = std::get<1>(zetaIHat);
         const unsigned k = std::get<2>(zetaIHat);
-        const double phiHatZetaIHat = distributionFunctionGrid[i][j][j];
+        const double phiHatZetaIHat = distributionFunctionGrid[i][j][k];
         
         return 1.0/(2 * mj.size()) * deltaT * beta * beta * beta * sum * sgn(phiHatZetaIHat);          
     }

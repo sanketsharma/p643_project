@@ -1,8 +1,12 @@
 #define BOOST_TEST_MODULE DVMTests
 
+
 #include <boost/test/unit_test.hpp>
 #include <Grid.h>
 #include <CollisionPartnersGenerator.h>
+#include <easylogging++.h>
+
+INITIALIZE_EASYLOGGINGPP
 
 BOOST_AUTO_TEST_CASE(collision_partners_generator_test)
 {

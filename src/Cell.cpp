@@ -2,6 +2,7 @@
 #include <cmath>
 #include <distribution.h>
 #include <stdexcept>
+#include <easylogging++.h>
 
 namespace p643
 {
@@ -14,7 +15,7 @@ namespace p643
     nHat(nHat),
     tHat(tHat),
     uHat(uHat),
-    distributionFunctionGrid(11, std::vector<std::vector<double>>(velocityGridSide, std::vector<double>(velocityGridSide, 0.0)))
+    distributionFunctionGrid(velocityGridSide, std::vector<std::vector<double>>(velocityGridSide, std::vector<double>(velocityGridSide, 0.0)))
     {
         if(velocityGridSide%2==0)
         {

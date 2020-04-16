@@ -50,8 +50,6 @@ bool isCorner(const int maxIndexMagnitude, Index point)
     int y = std::get<1>(point);
     int z = std::get<2>(point);
 
-    unsigned count = 0;
-
     if(x == maxIndexMagnitude || x == -1 * maxIndexMagnitude)
     {
         if(y == maxIndexMagnitude || y == -1 * maxIndexMagnitude)
