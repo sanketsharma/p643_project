@@ -30,25 +30,25 @@ BOOST_AUTO_TEST_CASE(interpolation_test)
     const unsigned maxIndexMagnitude = 5; 
     const double beta = 0.6; 
 
-    double vx = 4.1*beta;
-    double vy = 4.1*beta;
-    double vz = 4.1*beta;
+    double vx = 4.0/beta;
+    double vy = 4.0/beta;
+    double vz = 4.0/beta;
     int sum = testHelper(maxIndexMagnitude, beta, vx, vy, vz);
     BOOST_CHECK_CLOSE(sum, 1.0, 0.001);
 
     std::cout << std::endl;
 
-    vx = 5.1*beta;
-    vy = 4.1*beta;
-    vz = 4.1*beta;
+    vx = 5.1/beta;
+    vy = 4.1/beta;
+    vz = 4.1/beta;
     sum = testHelper(maxIndexMagnitude, beta, vx, vy, vz);
     BOOST_CHECK_CLOSE(sum, 1.0, 0.001);
 
     std::cout << std::endl;
 
-    vx = 5.1*beta;
-    vy = 5.1*beta;
-    vz = 5.1*beta;
+    vx = 5.1/beta;
+    vy = 5.1/beta;
+    vz = 5.1/beta;
     testHelper(maxIndexMagnitude, beta, vx, vy, vz);
     sum = testHelper(maxIndexMagnitude, beta, vx, vy, vz);
     BOOST_CHECK_CLOSE(sum, 0.0, 0.001);
