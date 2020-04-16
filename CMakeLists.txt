@@ -30,7 +30,7 @@ set(SOURCES src/Cell.cpp
             src/interpolation.cpp 
             src/PostCollisionVelocitiesGenerator.cpp
             src/collisions.cpp
-            src/simulate.cpp
+            src/Simulator.cpp
             logging/easylogging++.cc)
 
 add_library(dvmLibrary ${SOURCES})

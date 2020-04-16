@@ -1,4 +1,4 @@
-#include <simulate.h>
+#include <Simulator.h>
 #include <fstream>
 #include <sstream>
 #include <easylogging++.h>
@@ -32,7 +32,8 @@ int main()
     el::Loggers::reconfigureLogger("default", conf);
     auto configValues = getConfigValues("../config/params.cfg");
     LOG(INFO) << "Starting simulation" ;
-    p643::simulate(configValues);
+    p643::Simulator simulator(configValues);
+    simulator.simulate();
     LOG(INFO) << "Ending simulation" ;
     return 0;
 }
