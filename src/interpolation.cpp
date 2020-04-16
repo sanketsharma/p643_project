@@ -50,11 +50,11 @@ bool isCorner(const int maxIndexMagnitude, Index point)
     int y = std::get<1>(point);
     int z = std::get<2>(point);
 
-    if(x == maxIndexMagnitude || x == -1 * maxIndexMagnitude)
+    if(std::abs(x) == maxIndexMagnitude - 1)
     {
-        if(y == maxIndexMagnitude || y == -1 * maxIndexMagnitude)
+        if(std::abs(y) == maxIndexMagnitude - 1)
         {
-            if(z == maxIndexMagnitude || z == -1 * maxIndexMagnitude)
+            if(std::abs(z) == maxIndexMagnitude - 1)
             {
                 return true;
             }
@@ -91,9 +91,9 @@ std::array<Index, 5> getStencilOutsidePoint(const int maxIndexMagnitude, const d
         unsigned locationSum = std::accumulate(location.begin(), location.end(), 0);
         Index origin;
         {
-            int originX =  static_cast<int>(std::nearbyint(vxNormalized));
-            int originY =  static_cast<int>(std::nearbyint(vyNormalized));
-            int originZ =  static_cast<int>(std::nearbyint(vzNormalized));
+            int originX =  static_cast<int>(std::nearbyint(vxNormalized)) + 5;
+            int originY =  static_cast<int>(std::nearbyint(vyNormalized)) + 5;
+            int originZ =  static_cast<int>(std::nearbyint(vzNormalized)) + 5;
             origin = std::make_tuple(originX, originY, originZ);
         }
         Index ix = origin;
@@ -105,7 +105,7 @@ std::array<Index, 5> getStencilOutsidePoint(const int maxIndexMagnitude, const d
             if(location[0] == 1)
             {
                 a = vxNormalized - maxIndexMagnitude;
-                std::get<0>(origin) = sgn(a) * maxIndexMagnitude;
+                std::get<0>(origin) = sgn(a) * (maxIndexMagnitude - 1);
                 b = vyNormalized - std::get<1>(origin);
                 c = vzNormalized - std::get<2>(origin);
                 std::get<0>(ix) = std::get<0>(origin) - sgn(a);
@@ -117,7 +117,7 @@ std::array<Index, 5> getStencilOutsidePoint(const int maxIndexMagnitude, const d
             else if(location[1] == 1)
             {
                 b = vyNormalized - maxIndexMagnitude;
-                std::get<1>(origin) = sgn(b) * maxIndexMagnitude;
+                std::get<1>(origin) = sgn(b) * (maxIndexMagnitude - 1);
                 c = vzNormalized - std::get<2>(origin);
                 a = vxNormalized - std::get<0>(origin);
                 std::get<0>(ix) = std::get<0>(origin) + sgn(a);
@@ -129,7 +129,7 @@ std::array<Index, 5> getStencilOutsidePoint(const int maxIndexMagnitude, const d
             else //location[2] == 1
             {
                 c = vzNormalized - maxIndexMagnitude;
-                std::get<2>(origin) = sgn(c) * maxIndexMagnitude;
+                std::get<2>(origin) = sgn(c) * (maxIndexMagnitude - 1);
                 a = vxNormalized - std::get<0>(origin);
                 b = vyNormalized - std::get<1>(origin);
                 std::get<0>(ix) = std::get<0>(origin) + sgn(a);
@@ -144,9 +144,9 @@ std::array<Index, 5> getStencilOutsidePoint(const int maxIndexMagnitude, const d
             if(location[0] == 0) //y ad z coordinate overshoot
             {
                 b = vyNormalized - maxIndexMagnitude;
-                std::get<1>(origin)  =  (sgn(b)) * maxIndexMagnitude;
+                std::get<1>(origin)  =  (sgn(b)) * (maxIndexMagnitude -1);
                 c = vzNormalized - maxIndexMagnitude;
-                std::get<2>(origin)  =  (sgn(c)) * maxIndexMagnitude;
+                std::get<2>(origin)  =  (sgn(c)) * (maxIndexMagnitude - 1);
                 a = vxNormalized - std::get<0>(origin);
                 std::get<0>(ix) = std::get<0>(origin) + sgn(a);
                 std::get<1>(iy) = std::get<1>(origin) - sgn(b);
@@ -157,9 +157,9 @@ std::array<Index, 5> getStencilOutsidePoint(const int maxIndexMagnitude, const d
             else if(location[1] == 0) //z and x coordinate overshoot
             {
                 c = vzNormalized - maxIndexMagnitude;
-                std::get<2>(origin)  =  (sgn(c)) * maxIndexMagnitude;
+                std::get<2>(origin)  =  (sgn(c)) * (maxIndexMagnitude - 1);
                 a = vxNormalized - maxIndexMagnitude;
-                std::get<0>(origin)  =  (sgn(a)) * maxIndexMagnitude;
+                std::get<0>(origin)  =  (sgn(a)) * (maxIndexMagnitude - 1);
                 b = vyNormalized - std::get<1>(origin);
                 std::get<0>(ix) = std::get<0>(origin) - sgn(a);
                 std::get<1>(iy) = std::get<1>(origin) + sgn(b);
@@ -170,9 +170,9 @@ std::array<Index, 5> getStencilOutsidePoint(const int maxIndexMagnitude, const d
             else //location[2] == 0 //x and y coordinate overshoot
             {
                 a = vxNormalized - maxIndexMagnitude ;
-                std::get<0>(origin)  =  (sgn(a)) * maxIndexMagnitude;
+                std::get<0>(origin)  =  (sgn(a)) * (maxIndexMagnitude - 1);
                 b = vyNormalized - maxIndexMagnitude;
-                std::get<1>(origin)  =  (sgn(b)) * maxIndexMagnitude;
+                std::get<1>(origin)  =  (sgn(b)) * (maxIndexMagnitude - 1);
                 c = vyNormalized - std::get<2>(origin);
                 std::get<0>(ix) = std::get<0>(origin) - sgn(a);
                 std::get<1>(iy) = std::get<1>(origin) - sgn(b);
@@ -184,11 +184,11 @@ std::array<Index, 5> getStencilOutsidePoint(const int maxIndexMagnitude, const d
         else//Corner
         {
             a = vxNormalized - maxIndexMagnitude;
-            std::get<0>(origin)  =  (sgn(a)) * maxIndexMagnitude;
+            std::get<0>(origin)  =  (sgn(a)) * (maxIndexMagnitude - 1);
             b = vyNormalized - maxIndexMagnitude;
-            std::get<1>(origin)  =  (sgn(b)) * maxIndexMagnitude;
+            std::get<1>(origin)  =  (sgn(b)) * (maxIndexMagnitude - 1);
             c = vzNormalized - maxIndexMagnitude;
-            std::get<2>(origin)  =  (sgn(c)) * maxIndexMagnitude;
+            std::get<2>(origin)  =  (sgn(c)) * (maxIndexMagnitude - 1);
             std::get<0>(ix) = std::get<0>(origin) - sgn(a);
             std::get<1>(iy) = std::get<1>(origin) - sgn(b);
             std::get<2>(iz) = std::get<2>(origin) - sgn(c);
@@ -201,9 +201,9 @@ std::array<Index, 5> getStencilOutsidePoint(const int maxIndexMagnitude, const d
 std::map<Index, double> 
 interpolateToGrid(const unsigned maxIndexMagnitude, const double beta, const double vx, const double vy, const double vz)
 {
-    const double vxNormalized = vx/beta;
-    const double vyNormalized = vy/beta;
-    const double vzNormalized = vz/beta;
+    const double vxNormalized = vx*beta;
+    const double vyNormalized = vy*beta;
+    const double vzNormalized = vz*beta;
 
     const auto location = pointLocation(maxIndexMagnitude, vxNormalized, vyNormalized, vzNormalized);
     unsigned locationSum = std::accumulate(location.begin(), location.end(), 0);
@@ -211,9 +211,9 @@ interpolateToGrid(const unsigned maxIndexMagnitude, const double beta, const dou
     std::map<Index, double> fractionalDensityChanges;
     if(locationSum == 0) //Inside vsd
     {
-        const int originX =  static_cast<int>(std::nearbyint(vxNormalized));
-        const int originY =  static_cast<int>(std::nearbyint(vyNormalized));
-        const int originZ =  static_cast<int>(std::nearbyint(vzNormalized));
+        const int originX =  static_cast<int>(std::nearbyint(vxNormalized)) + 5;
+        const int originY =  static_cast<int>(std::nearbyint(vyNormalized)) + 5;
+        const int originZ =  static_cast<int>(std::nearbyint(vzNormalized)) + 5;
 
         const double a = vxNormalized - originX;
         const double b = vyNormalized - originY;
