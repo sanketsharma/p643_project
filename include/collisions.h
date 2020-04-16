@@ -4,6 +4,9 @@
 #include <vector>
 #include <Cell.h>
 #include <CollisionPartnersGenerator.h>
+#include <map>
+#include <PostCollisionVelocitiesGenerator.h>
+#include <interpolation.h>
 
 namespace p643
 {
@@ -13,6 +16,13 @@ namespace p643
                                                                 const Index& zetaIHat, 
                                                                 double beta,
                                                                 double deltaT);
+    void processCollisions(Cell& cell, const std::vector<Index> mj, 
+                            PostCollisionVelocitiesGenerator& postCollisionVelocitiesGenerator, 
+                            const std::array<double, 3> eta, 
+                            const Index& etaIHat, 
+                            const Index& zetaIHat, 
+                            double beta, 
+                            double deltaT);
 }
 
 #endif
