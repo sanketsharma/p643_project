@@ -1,15 +1,21 @@
-#include <collisions.h>
+#include <Collider.h>
 #include <easylogging++.h>
 
 namespace p643
 {
-double  collisionDepletion(const std::vector<std::vector<std::vector<double>>>& distributionFunctionGrid, 
-                                                            const std::vector<Index>& mj, 
-                                                            const Index& etaIHat, 
-                                                            const Index& zetaIHat, 
-                                                            double beta,
-                                                            double deltaT)
+Collider::Collider(Cell& cell, double beta, double deltaT):
+    cell(cell),
+    postCollisionVelocitiesGenerator(),
+    beta(beta),
+    deltaT(deltaT),
+    velocityGridSide(cell.distributionFunctionGrid.size())
+{}
+
+double  Collider::collisionDepletion( const std::vector<Index>& mj, 
+                                        const Index& etaIHat, 
+                                        const Index& zetaIHat)
 {
+    const std::vector<std::vector<std::vector<double>>>& distributionFunctionGrid = cell.distributionFunctionGrid;
     double sum = 0.0;
     for(const auto& index : mj)
     {
@@ -32,7 +38,7 @@ double  collisionDepletion(const std::vector<std::vector<std::vector<double>>>& 
     return 1.0/(2 * mj.size()) * deltaT * beta * beta * beta * sum * sgn(phiHatZetaIHat);          
 }
 
-void replenish(Cell& cell, const std::map<Index, double>& replenishmentFractions, double replenishment, int velocityGridSide)
+void Collider::replenish(const std::map<Index, double>& replenishmentFractions, double replenishment)
 {
     for(const auto& pair : replenishmentFractions)
     {
@@ -45,16 +51,12 @@ void replenish(Cell& cell, const std::map<Index, double>& replenishmentFractions
     }
 }
 
-void processCollisions(Cell& cell, const std::vector<Index> mj, 
-                        PostCollisionVelocitiesGenerator& postCollisionVelocitiesGenerator, 
+void Collider::processCollisions(const std::vector<Index> mj, 
                         const std::array<double, 3> eta, 
                         const Index& etaIHat, 
-                        const Index& zetaIHat, 
-                        double beta, 
-                        double deltaT)
+                        const Index& zetaIHat)
 {
-    int velocityGridSide = cell.distributionFunctionGrid.size();
-    const double depletion = p643::collisionDepletion(cell.distributionFunctionGrid, mj, etaIHat, zetaIHat, beta, deltaT);
+    const double depletion = collisionDepletion(mj, etaIHat, zetaIHat);
     const double zetaX = p643::Cell::getVelocity(beta, std::get<0>(zetaIHat));
     const double zetaY = p643::Cell::getVelocity(beta, std::get<1>(zetaIHat));
     const double zetaZ = p643::Cell::getVelocity(beta, std::get<2>(zetaIHat));
@@ -66,13 +68,13 @@ void processCollisions(Cell& cell, const std::vector<Index> mj,
     const double etaPrimeZ = postCollisionVelocities[2];
     auto replishmentFractionsEta = interpolateToGrid(velocityGridSide, beta, etaPrimeX, etaPrimeY, etaPrimeZ);
     const double replenishmentEta = depletion/2;
-    replenish(cell, replishmentFractionsEta, replenishmentEta, velocityGridSide); 
+    replenish(replishmentFractionsEta, replenishmentEta); 
 
     const double zetaPrimeX = postCollisionVelocities[3];
     const double zetaPrimeY = postCollisionVelocities[4];
     const double zetaPrimeZ = postCollisionVelocities[5];
     auto replishmentFractionsZeta = interpolateToGrid(velocityGridSide, beta, zetaPrimeX, zetaPrimeY, zetaPrimeZ);
     const double replenishmentZeta = depletion/2;
-    replenish(cell, replishmentFractionsZeta, replenishmentZeta, velocityGridSide);
+    replenish(replishmentFractionsZeta, replenishmentZeta);
 }
 }

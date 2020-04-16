@@ -29,7 +29,7 @@ set(SOURCES src/Cell.cpp
             src/Grid.cpp 
             src/interpolation.cpp 
             src/PostCollisionVelocitiesGenerator.cpp
-            src/collisions.cpp
+            src/Collider.cpp
             src/Simulator.cpp
             logging/easylogging++.cc)
 

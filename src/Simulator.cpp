@@ -1,4 +1,4 @@
-#include <collisions.h>
+#include <Collider.h>
 #include <cmath>
 #include <tuple>
 #include <CollisionPartnersGenerator.h>
@@ -44,7 +44,8 @@ void Simulator::simulate()
                 for(int r = 0; r < gridZ; ++r)
                 {
                     auto& cell = grid.myGrid[p][q][r];
-                    p643::CollisionPartnersGenerator collisionPartnersGenerator(cell);
+                    CollisionPartnersGenerator collisionPartnersGenerator(cell);
+                    Collider collider(cell, beta, deltaT);
 
                     for(unsigned i = 0; i < maximumIndex; ++i)
                     {
@@ -61,7 +62,7 @@ void Simulator::simulate()
 
                                 for(auto zetaIHat :  mj)
                                 {
-                                    processCollisions(cell, mj, postCollisionVelocitiesGenerator, eta, etaIHat, zetaIHat, beta, deltaT);
+                                    collider.processCollisions(mj, eta, etaIHat, zetaIHat);
                                 }
                             }
                         }
