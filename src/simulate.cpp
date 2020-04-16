@@ -42,6 +42,7 @@ void simulate(const std::map<std::string, std::string>& configValues)
     const int gridZ = std::stoi(configValues.at("gridZ"));
     const double depletingFraction = std::stod(configValues.at("depletingFraction"));
     const unsigned velocityGridSide = std::stoi(configValues.at("velocityGridSide"));
+    const unsigned maximumIndex = 2*velocityGridSide + 1;
 
     p643::Grid grid(gridX, gridY, gridZ, velocityGridSide, size, beta, etaR, n, tHat, uHat);
     p643::PostCollisionVelocitiesGenerator postCollisionVelocitiesGenerator;
@@ -58,13 +59,13 @@ void simulate(const std::map<std::string, std::string>& configValues)
                     auto& cell = grid.myGrid[p][q][r];
                     p643::CollisionPartnersGenerator collisionPartnersGenerator(cell);
 
-                    for(unsigned i = 0; i < 11; ++i)
+                    for(unsigned i = 0; i < maximumIndex; ++i)
                     {
                         const double etaX = p643::Cell::getVelocity(beta, i);
-                        for(unsigned j = 0; j < 11; ++j)
+                        for(unsigned j = 0; j < maximumIndex; ++j)
                         {
                             const double etaY = p643::Cell::getVelocity(beta, j);
-                            for(unsigned k = 0; k < 11; ++k)
+                            for(unsigned k = 0; k < maximumIndex; ++k)
                             {
                                 const double etaZ = p643::Cell::getVelocity(beta, k);
                                 const auto etaIHat = std::make_tuple(i, j, k);
