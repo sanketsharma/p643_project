@@ -211,9 +211,9 @@ interpolateToGrid(const unsigned velocityGridSide, const double beta, const doub
     std::map<Index, double> fractionalDensityChanges;
     if(locationSum == 0) //Inside vsd
     {
-        const int originX =  static_cast<int>(std::nearbyint(vxNormalized)) + 5;
-        const int originY =  static_cast<int>(std::nearbyint(vyNormalized)) + 5;
-        const int originZ =  static_cast<int>(std::nearbyint(vzNormalized)) + 5;
+        const int originX =  static_cast<int>(std::nearbyint(vxNormalized)) + velocityGridSide/2;
+        const int originY =  static_cast<int>(std::nearbyint(vyNormalized)) + velocityGridSide/2;
+        const int originZ =  static_cast<int>(std::nearbyint(vzNormalized)) + velocityGridSide/2;
 
         const double a = vxNormalized - originX;
         const double b = vyNormalized - originY;
