@@ -44,17 +44,17 @@ getFractionalDensityChanges(double a, double b, double c, bool withinVSD, unsign
     }
 }
 
-bool isCorner(const int velocityGridSide, Index point)
+bool isCorner(const int velocityCompMax, Index point)
 {
     int x = std::get<0>(point);
     int y = std::get<1>(point);
     int z = std::get<2>(point);
 
-    if(x == velocityGridSide - 1 || x == 0)
+    if(x == velocityCompMax || x == -1 * velocityCompMax)
     {
-        if(y == velocityGridSide - 1 || y == 0)
+        if(y == velocityCompMax || y == -1 * velocityCompMax)
         {
-            if(z == velocityGridSide - 1 || z == 0)
+            if(z == velocityCompMax || z == -1 * velocityCompMax)
             {
                 return true;
             }
@@ -64,21 +64,21 @@ bool isCorner(const int velocityGridSide, Index point)
     return false;
 }
 
-std::array<unsigned, 3> pointLocation(const int velocityGridSide, const double vxNormalized, const double vyNormalized, const double vzNormalized)
+std::array<unsigned, 3> pointLocation(const int velocityCompMax, const double vxNormalized, const double vyNormalized, const double vzNormalized)
 {
     std::array<unsigned, 3> location = {0};
 
-    if(vxNormalized >= velocityGridSide || vxNormalized <= -1*velocityGridSide) //Only one can happen
+    if(vxNormalized >= velocityCompMax || vxNormalized <= -1*velocityCompMax) //Only one can happen
     {
         location[0] = 1;
     }
     
-    if(vyNormalized >= velocityGridSide || vyNormalized <= -1*velocityGridSide)//Only one can happen
+    if(vyNormalized >= velocityCompMax || vyNormalized <= -1*velocityCompMax)//Only one can happen
     {
         location[1] = 1;
     }
     
-    if(vzNormalized >= velocityGridSide || vzNormalized <= -1*velocityGridSide)//Only one can happen
+    if(vzNormalized >= velocityCompMax || vzNormalized <= -1*velocityCompMax)//Only one can happen
     {
         location[2] = 1;
     }
@@ -86,14 +86,14 @@ std::array<unsigned, 3> pointLocation(const int velocityGridSide, const double v
     return location; //0 => inside 1=> outside face 2=> outside edge 3=> outside corner
 }
 
-std::array<Index, 5> getStencilOutsidePoint(const int velocityGridSide, const double vxNormalized, const double vyNormalized, const double vzNormalized, const std::array<unsigned,3>& location, double& a, double& b, double& c, unsigned& whichExternalPoint)
+std::array<Index, 5> getStencilOutsidePoint(const int velocityCompMax, const double vxNormalized, const double vyNormalized, const double vzNormalized, const std::array<unsigned,3>& location, double& a, double& b, double& c, unsigned& whichExternalPoint)
 {
         unsigned locationSum = std::accumulate(location.begin(), location.end(), 0);
         Index origin;
         {
-            int originX =  static_cast<int>(std::nearbyint(vxNormalized)) + velocityGridSide;
-            int originY =  static_cast<int>(std::nearbyint(vyNormalized)) + velocityGridSide;
-            int originZ =  static_cast<int>(std::nearbyint(vzNormalized)) + velocityGridSide;
+            int originX =  static_cast<int>(std::nearbyint(vxNormalized));
+            int originY =  static_cast<int>(std::nearbyint(vyNormalized));
+            int originZ =  static_cast<int>(std::nearbyint(vzNormalized));
             origin = std::make_tuple(originX, originY, originZ);
         }
         Index ix = origin;
@@ -104,10 +104,10 @@ std::array<Index, 5> getStencilOutsidePoint(const int velocityGridSide, const do
         {
             if(location[0] == 1)
             {
-                a = vxNormalized - velocityGridSide;
-                std::get<0>(origin) = sgn(a) * (velocityGridSide - 1);
-                b = vyNormalized - (std::get<1>(origin) - velocityGridSide);
-                c = vzNormalized - (std::get<2>(origin) - velocityGridSide);
+                a = vxNormalized - velocityCompMax;
+                std::get<0>(origin) = sgn(a) * velocityCompMax;
+                b = vyNormalized - std::get<1>(origin);
+                c = vzNormalized - std::get<2>(origin);
                 std::get<0>(ix) = std::get<0>(origin) - sgn(a);
                 std::get<1>(iy) = std::get<1>(origin) + sgn(b);
                 std::get<2>(iz) = std::get<2>(origin) + sgn(c);
@@ -116,10 +116,10 @@ std::array<Index, 5> getStencilOutsidePoint(const int velocityGridSide, const do
             }
             else if(location[1] == 1)
             {
-                b = vyNormalized - velocityGridSide;
-                std::get<1>(origin) = sgn(b) * (velocityGridSide - 1);
-                c = vzNormalized - (std::get<2>(origin) - velocityGridSide);
-                a = vxNormalized - (std::get<0>(origin) - velocityGridSide);
+                b = vyNormalized - velocityCompMax;
+                std::get<1>(origin) = sgn(b) * velocityCompMax;
+                c = vzNormalized - std::get<2>(origin);
+                a = vxNormalized - std::get<0>(origin);
                 std::get<0>(ix) = std::get<0>(origin) + sgn(a);
                 std::get<1>(iy) = std::get<1>(origin) - sgn(b);
                 std::get<2>(iz) = std::get<2>(origin) + sgn(c);
@@ -128,10 +128,10 @@ std::array<Index, 5> getStencilOutsidePoint(const int velocityGridSide, const do
             }
             else //location[2] == 1
             {
-                c = vzNormalized - velocityGridSide;
-                std::get<2>(origin) = sgn(c) * (velocityGridSide - 1);
-                a = vxNormalized - (std::get<0>(origin) - velocityGridSide);
-                b = vyNormalized - (std::get<1>(origin) - velocityGridSide);
+                c = vzNormalized - velocityCompMax;
+                std::get<2>(origin) = sgn(c) * velocityCompMax;
+                a = vxNormalized - std::get<0>(origin);
+                b = vyNormalized - std::get<1>(origin);
                 std::get<0>(ix) = std::get<0>(origin) + sgn(a);
                 std::get<1>(iy) = std::get<1>(origin) + sgn(b);
                 std::get<2>(iz) = std::get<2>(origin) - sgn(c);
@@ -143,11 +143,11 @@ std::array<Index, 5> getStencilOutsidePoint(const int velocityGridSide, const do
         {
             if(location[0] == 0) //y ad z coordinate overshoot
             {
-                b = vyNormalized - velocityGridSide;
-                std::get<1>(origin)  =  (sgn(b)) * (velocityGridSide -1);
-                c = vzNormalized - velocityGridSide;
-                std::get<2>(origin)  =  (sgn(c)) * (velocityGridSide - 1);
-                a = vxNormalized - (std::get<0>(origin) - velocityGridSide);
+                b = vyNormalized - velocityCompMax;
+                std::get<1>(origin)  =  sgn(b) * velocityCompMax;
+                c = vzNormalized - velocityCompMax;
+                std::get<2>(origin)  =  sgn(c) * velocityCompMax;
+                a = vxNormalized - std::get<0>(origin);
                 std::get<0>(ix) = std::get<0>(origin) + sgn(a);
                 std::get<1>(iy) = std::get<1>(origin) - sgn(b);
                 std::get<2>(iz) = std::get<2>(origin) - sgn(c);
@@ -156,11 +156,11 @@ std::array<Index, 5> getStencilOutsidePoint(const int velocityGridSide, const do
             }
             else if(location[1] == 0) //z and x coordinate overshoot
             {
-                c = vzNormalized - velocityGridSide;
-                std::get<2>(origin)  =  (sgn(c)) * (velocityGridSide - 1);
-                a = vxNormalized - velocityGridSide;
-                std::get<0>(origin)  =  (sgn(a)) * (velocityGridSide - 1);
-                b = vyNormalized - (std::get<1>(origin) - velocityGridSide);
+                c = vzNormalized - velocityCompMax;
+                std::get<2>(origin)  =  sgn(c) * velocityCompMax;
+                a = vxNormalized - velocityCompMax;
+                std::get<0>(origin)  =  sgn(a) * velocityCompMax;
+                b = vyNormalized - std::get<1>(origin);
                 std::get<0>(ix) = std::get<0>(origin) - sgn(a);
                 std::get<1>(iy) = std::get<1>(origin) + sgn(b);
                 std::get<2>(iz) = std::get<2>(origin) - sgn(c);
@@ -169,11 +169,11 @@ std::array<Index, 5> getStencilOutsidePoint(const int velocityGridSide, const do
             }
             else //location[2] == 0 //x and y coordinate overshoot
             {
-                a = vxNormalized - velocityGridSide ;
-                std::get<0>(origin)  =  (sgn(a)) * (velocityGridSide - 1);
-                b = vyNormalized - velocityGridSide;
-                std::get<1>(origin)  =  (sgn(b)) * (velocityGridSide - 1);
-                c = vyNormalized - (std::get<2>(origin) - velocityGridSide);
+                a = vxNormalized - velocityCompMax;
+                std::get<0>(origin)  =  sgn(a) * velocityCompMax;
+                b = vyNormalized - velocityCompMax;
+                std::get<1>(origin)  =  sgn(b) * velocityCompMax;
+                c = vyNormalized - std::get<2>(origin);
                 std::get<0>(ix) = std::get<0>(origin) - sgn(a);
                 std::get<1>(iy) = std::get<1>(origin) - sgn(b);
                 std::get<2>(iz) = std::get<2>(origin) + sgn(c);
@@ -183,12 +183,12 @@ std::array<Index, 5> getStencilOutsidePoint(const int velocityGridSide, const do
         }
         else//Corner
         {
-            a = vxNormalized - velocityGridSide;
-            std::get<0>(origin)  =  (sgn(a)) * (velocityGridSide - 1);
-            b = vyNormalized - velocityGridSide;
-            std::get<1>(origin)  =  (sgn(b)) * (velocityGridSide - 1);
-            c = vzNormalized - velocityGridSide;
-            std::get<2>(origin)  =  (sgn(c)) * (velocityGridSide - 1);
+            a = vxNormalized - velocityCompMax;;
+            std::get<0>(origin)  =  sgn(a) * velocityCompMax;
+            b = vyNormalized - velocityCompMax;
+            std::get<1>(origin)  =  sgn(b) * velocityCompMax;
+            c = vzNormalized - velocityCompMax;
+            std::get<2>(origin)  =  sgn(c) * velocityCompMax;
             std::get<0>(ix) = std::get<0>(origin) - sgn(a);
             std::get<1>(iy) = std::get<1>(origin) - sgn(b);
             std::get<2>(iz) = std::get<2>(origin) - sgn(c);
@@ -199,21 +199,21 @@ std::array<Index, 5> getStencilOutsidePoint(const int velocityGridSide, const do
 }
 
 std::map<Index, double> 
-interpolateToGrid(const unsigned velocityGridSide, const double beta, const double vx, const double vy, const double vz)
+interpolateToGrid(const unsigned velocityCompMax, const double beta, const double vx, const double vy, const double vz)
 {
     const double vxNormalized = vx*beta;
     const double vyNormalized = vy*beta;
     const double vzNormalized = vz*beta;
 
-    const auto location = pointLocation(velocityGridSide, vxNormalized, vyNormalized, vzNormalized);
+    const auto location = pointLocation(velocityCompMax, vxNormalized, vyNormalized, vzNormalized);
     unsigned locationSum = std::accumulate(location.begin(), location.end(), 0);
 
     std::map<Index, double> fractionalDensityChanges;
     if(locationSum == 0) //Inside vsd
     {
-        const int originX =  static_cast<int>(std::nearbyint(vxNormalized)) + velocityGridSide/2;
-        const int originY =  static_cast<int>(std::nearbyint(vyNormalized)) + velocityGridSide/2;
-        const int originZ =  static_cast<int>(std::nearbyint(vzNormalized)) + velocityGridSide/2;
+        const int originX =  static_cast<int>(std::nearbyint(vxNormalized));
+        const int originY =  static_cast<int>(std::nearbyint(vyNormalized));
+        const int originZ =  static_cast<int>(std::nearbyint(vzNormalized));
 
         const double a = vxNormalized - originX;
         const double b = vyNormalized - originY;
@@ -249,12 +249,12 @@ interpolateToGrid(const unsigned velocityGridSide, const double beta, const doub
         double b = 0.0;
         double c = 0.0;
         unsigned whichExternalPoint = 4; //0 => x, 1 => y, 2 => z, 3 => is a corner point
-        auto stencil = getStencilOutsidePoint(velocityGridSide, vxNormalized, vyNormalized, vzNormalized, location, a, b, c, whichExternalPoint);
+        auto stencil = getStencilOutsidePoint(velocityCompMax, vxNormalized, vyNormalized, vzNormalized, location, a, b, c, whichExternalPoint);
 
         if(whichExternalPoint != 3) //Ignoring when origin is a corner point 
         {
             const Index origin = stencil[0];
-            if(!isCorner(velocityGridSide, origin))
+            if(!isCorner(velocityCompMax, origin))
             {
                 const Index ix = stencil[1];
                 const Index iy = stencil[2];

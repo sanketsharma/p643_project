@@ -11,6 +11,11 @@ namespace p643
     {
         return (x > 0) - (x < 0);
     }
+
+    inline Index toVelocity(const Index& i, int gridSide)
+    {
+        return std::make_tuple(std::get<0>(i) - gridSide/2, std::get<1>(i) - gridSide/2, std::get<2>(i) - gridSide/2);
+    }
 }
 
 #endif
