@@ -19,9 +19,10 @@ namespace p643
 
         Cell(const unsigned velocityGridSide, const double size, const double beta, const double etaR, const double nHat, const double tHat, const double uHat);
 
-        static inline double getVelocity(const double beta, const int index)
+        inline double getVelocity(const double beta, const int index)
         {
-            return beta * (index - 6);
+            int shift = velocityGridSide/2 + 1;
+            return beta * (index - shift);
         }
     };
 }

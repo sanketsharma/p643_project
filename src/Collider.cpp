@@ -57,9 +57,9 @@ void Collider::processCollisions(const std::vector<Index> mj,
                         const Index& zetaIHat)
 {
     const double depletion = collisionDepletion(mj, etaIHat, zetaIHat);
-    const double zetaX = p643::Cell::getVelocity(beta, std::get<0>(zetaIHat));
-    const double zetaY = p643::Cell::getVelocity(beta, std::get<1>(zetaIHat));
-    const double zetaZ = p643::Cell::getVelocity(beta, std::get<2>(zetaIHat));
+    const double zetaX = cell.getVelocity(beta, std::get<0>(zetaIHat));
+    const double zetaY = cell.getVelocity(beta, std::get<1>(zetaIHat));
+    const double zetaZ = cell.getVelocity(beta, std::get<2>(zetaIHat));
     const std::array<double, 3> zeta{{zetaX, zetaY, zetaZ}};
 
     const auto postCollisionVelocities = postCollisionVelocitiesGenerator.getPostCollisionVelocities(eta, zeta);

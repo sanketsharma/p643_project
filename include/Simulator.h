@@ -15,6 +15,8 @@ class Simulator
     void simulate();
 
     private:
+    void dumpData();
+
     const double k;
     const double Tr;
     const double m;
@@ -29,8 +31,8 @@ class Simulator
     const int gridY;
     const int gridZ;
     const double depletingFraction;
-    const unsigned velocityGridSide;
-    const unsigned maximumIndex;
+    const int velocityGridSide;
+    const int maximumIndex;
     Grid grid;
     PostCollisionVelocitiesGenerator postCollisionVelocitiesGenerator;
     double deltaT;

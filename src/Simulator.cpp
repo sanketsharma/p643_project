@@ -1,6 +1,8 @@
 #include <Collider.h>
 #include <cmath>
 #include <tuple>
+#include <chrono>
+#include <fstream>
 #include <CollisionPartnersGenerator.h>
 #include <Simulator.h>
 #include <interpolation.h>
@@ -29,12 +31,57 @@ Simulator::Simulator(const std::map<std::string, std::string>& configValues):
     grid(gridX, gridY, gridZ, velocityGridSide, size, beta, etaR, n, tHat, uHat),
     postCollisionVelocitiesGenerator(),
     deltaT(std::stod(configValues.at("deltaT"))),
-    maxSteps(100)
+    maxSteps(std::stoi(configValues.at("maxSteps")))
+{}
+
+void Simulator::dumpData()
 {
+    std::map<int, double> flattenedDistribution;
+    for(int p = 0; p < gridX; ++p)
+    {
+        for(int q = 0; q < gridY; ++q)
+        {
+            for(int r = 0; r < gridZ; ++r)
+            {
+                const auto& cell = grid.myGrid[p][q][r];
+                const auto& distributionFunctionGrid = cell.distributionFunctionGrid;
+                int shift = velocityGridSide/2 + 1;
+                for(int i = 0; i < maximumIndex; ++i)
+                {
+                    for(int j = 0; j < maximumIndex; ++j)
+                    {
+                        for(int k = 0; k < maximumIndex; ++k)
+                        {
+                            const int indexSquaredSum = (i-shift)*(i-shift) + (j-shift)*(j-shift) + (k-shift)*(k-shift);
+                            auto it = flattenedDistribution.find(indexSquaredSum);
+                            if(it != flattenedDistribution.end())
+                            {
+                                flattenedDistribution[indexSquaredSum] += distributionFunctionGrid[i][j][k];
+                            }
+                            else
+                            {
+                                flattenedDistribution.emplace(indexSquaredSum, distributionFunctionGrid[i][j][k]);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    long ms = std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count();
+
+    std::ofstream ofs(std::string("../logs/cell.dat.")+ std::to_string(ms));
+    for(auto pair : flattenedDistribution)
+    {
+        ofs << beta * std::sqrt(pair.first)*etaR << " " << pair.second << std::endl;
+    }
+    ofs.close();
 }
 
 void Simulator::simulate()
 {
+    dumpData();
     for(int step = 0 ; step < maxSteps; ++step)
     {
         for(int p = 0; p < gridX ; ++p)
@@ -47,15 +94,15 @@ void Simulator::simulate()
                     CollisionPartnersGenerator collisionPartnersGenerator(cell);
                     Collider collider(cell, beta, deltaT);
 
-                    for(unsigned i = 0; i < maximumIndex; ++i)
+                    for(int i = 0; i < maximumIndex; ++i)
                     {
-                        const double etaX = p643::Cell::getVelocity(beta, i);
-                        for(unsigned j = 0; j < maximumIndex; ++j)
+                        const double etaX = cell.getVelocity(beta, i);
+                        for(int j = 0; j < maximumIndex; ++j)
                         {
-                            const double etaY = p643::Cell::getVelocity(beta, j);
-                            for(unsigned k = 0; k < maximumIndex; ++k)
+                            const double etaY = cell.getVelocity(beta, j);
+                            for(int k = 0; k < maximumIndex; ++k)
                             {
-                                const double etaZ = p643::Cell::getVelocity(beta, k);
+                                const double etaZ = cell.getVelocity(beta, k);
                                 const auto etaIHat = std::make_tuple(i, j, k);
                                 const auto mj = collisionPartnersGenerator.getCollisionPartners(depletingFraction);
                                 const std::array<double, 3> eta{{etaX, etaY, etaZ}};
@@ -71,5 +118,6 @@ void Simulator::simulate()
             }
         }
     }
+    dumpData();
 }
 }
