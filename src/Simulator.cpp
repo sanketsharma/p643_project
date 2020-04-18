@@ -27,7 +27,6 @@ Simulator::Simulator(const std::map<std::string, std::string>& configValues):
     gridZ(std::stoi(configValues.at("gridZ"))),
     depletingFraction(std::stod(configValues.at("depletingFraction"))),
     velocityGridSide(std::stoi(configValues.at("velocityGridSide"))),
-    maximumIndex(velocityGridSide),
     grid(gridX, gridY, gridZ, velocityGridSide, size, beta, etaR, n, tHat, uHat),
     postCollisionVelocitiesGenerator(),
     deltaT(std::stod(configValues.at("deltaT"))),
@@ -45,12 +44,12 @@ void Simulator::dumpData()
             {
                 const auto& cell = grid.myGrid[p][q][r];
                 const auto& distributionFunctionGrid = cell.distributionFunctionGrid;
-                int shift = velocityGridSide/2 + 1;
-                for(int i = 0; i < maximumIndex; ++i)
+                int shift = velocityGridSide/2;
+                for(int i = 0; i < velocityGridSide; ++i)
                 {
-                    for(int j = 0; j < maximumIndex; ++j)
+                    for(int j = 0; j < velocityGridSide; ++j)
                     {
-                        for(int k = 0; k < maximumIndex; ++k)
+                        for(int k = 0; k < velocityGridSide; ++k)
                         {
                             const int indexSquaredSum = (i-shift)*(i-shift) + (j-shift)*(j-shift) + (k-shift)*(k-shift);
                             auto it = flattenedDistribution.find(indexSquaredSum);
@@ -94,13 +93,13 @@ void Simulator::simulate()
                     CollisionPartnersGenerator collisionPartnersGenerator(cell);
                     Collider collider(cell, beta, deltaT);
 
-                    for(int i = 0; i < maximumIndex; ++i)
+                    for(int i = 0; i < velocityGridSide; ++i)
                     {
                         const double etaX = cell.getVelocity(beta, i);
-                        for(int j = 0; j < maximumIndex; ++j)
+                        for(int j = 0; j < velocityGridSide; ++j)
                         {
                             const double etaY = cell.getVelocity(beta, j);
-                            for(int k = 0; k < maximumIndex; ++k)
+                            for(int k = 0; k < velocityGridSide; ++k)
                             {
                                 const double etaZ = cell.getVelocity(beta, k);
                                 const auto etaIHat = std::make_tuple(i, j, k);

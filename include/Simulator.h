@@ -32,7 +32,6 @@ class Simulator
     const int gridZ;
     const double depletingFraction;
     const int velocityGridSide;
-    const int maximumIndex;
     Grid grid;
     PostCollisionVelocitiesGenerator postCollisionVelocitiesGenerator;
     double deltaT;
