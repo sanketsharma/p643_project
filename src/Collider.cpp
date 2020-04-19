@@ -67,7 +67,6 @@ void Collider::processCollisions( const std::array<double, 3> eta,
     const int zetaIHatZ = std::get<2>(zetaIHat);
     const double phiHatZetaIHat = cell.distributionFunctionGrid[zetaIHatX][zetaIHatY][zetaIHatZ];
     const double depletion = depletionAbsValue * sgn(phiHatZetaIHat);
-    LOG(DEBUG) << "depletion: " << depletion;
 
     const double zetaX = cell.getVelocity(beta, zetaIHatX);
     const double zetaY = cell.getVelocity(beta, zetaIHatY);

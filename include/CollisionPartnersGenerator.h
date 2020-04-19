@@ -16,6 +16,8 @@ class CollisionPartnersGenerator
     std::vector<Index> getCollisionPartners(double depletingFraction);
 
     private:
+    void populateCumulativeDistributionFunction();
+
     const std::vector<std::vector<std::vector<double>>>& distributionFunctionGrid;
     double sum;
     const unsigned i;

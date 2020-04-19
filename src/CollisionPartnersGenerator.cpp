@@ -14,6 +14,9 @@ k(cell.distributionFunctionGrid.begin()->begin()->size()),
 nV(i*j*k),
 cumulativeDistributionFunction(nV),
 generator(randomDevice())
+{}
+
+void CollisionPartnersGenerator::populateCumulativeDistributionFunction()
 {
     auto it = cumulativeDistributionFunction.begin();
     for(auto it1 = distributionFunctionGrid.begin(); it1 != distributionFunctionGrid.end(); ++it1)
@@ -36,6 +39,7 @@ std::vector<Index> CollisionPartnersGenerator::getCollisionPartners(double deple
 {
     double cumulativeMassFraction = 0.0;
     std::vector<Index> collisionPartners;
+    populateCumulativeDistributionFunction();
 
     while(true)
     {
