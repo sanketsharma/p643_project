@@ -1,5 +1,6 @@
 #include <boost/test/unit_test.hpp>
 #include <interpolation.h>
+#include <iostream>
 
 double testHelper(int velocityGridSide, double beta, double vx, double vy, double vz)
 {
