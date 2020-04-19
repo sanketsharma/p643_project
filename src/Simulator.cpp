@@ -81,7 +81,7 @@ void Simulator::dumpData()
 void Simulator::simulate()
 {
     dumpData();
-    for(int step = 0 ; step < maxSteps; ++step)
+    for(int step = 0; step < maxSteps; ++step)
     {
         for(int p = 0; p < gridX ; ++p)
         {
@@ -105,10 +105,11 @@ void Simulator::simulate()
                                 const auto etaIHat = std::make_tuple(i, j, k);
                                 const auto mj = collisionPartnersGenerator.getCollisionPartners(depletingFraction);
                                 const std::array<double, 3> eta{{etaX, etaY, etaZ}};
+                                const double depletionAbsValue = collider.collisionDepletion(mj, etaIHat);
 
                                 for(auto zetaIHat :  mj)
                                 {
-                                    collider.processCollisions(mj, eta, etaIHat, zetaIHat);
+                                    collider.processCollisions(eta, etaIHat, zetaIHat, depletionAbsValue);
                                 }
                             }
                         }

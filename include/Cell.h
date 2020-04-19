@@ -21,7 +21,7 @@ namespace p643
 
         inline double getVelocity(const double beta, const int index)
         {
-            int shift = velocityGridSide/2 + 1;
+            int shift = velocityGridSide/2;
             return beta * (index - shift);
         }
     };

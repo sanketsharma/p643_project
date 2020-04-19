@@ -59,9 +59,27 @@ bool isCorner(const int velocityCompMax, Index point)
                 return true;
             }
         }
-
     }
     return false;
+}
+
+bool isBoundaryPoint(const int velocityCompMax, Index point)
+{
+    int x = std::get<0>(point);
+    int y = std::get<1>(point);
+    int z = std::get<2>(point);
+
+    if(x != velocityCompMax || x != -1 * velocityCompMax)
+    {
+        if(y != velocityCompMax || y != -1 * velocityCompMax)
+        {
+            if(z != velocityCompMax || z != -1 * velocityCompMax)
+            {
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 std::array<unsigned, 3> pointLocation(const int velocityCompMax, const double vxNormalized, const double vyNormalized, const double vzNormalized)
@@ -214,34 +232,39 @@ interpolateToGrid(const unsigned velocityCompMax, const double beta, const doubl
         const int originX =  static_cast<int>(std::nearbyint(vxNormalized));
         const int originY =  static_cast<int>(std::nearbyint(vyNormalized));
         const int originZ =  static_cast<int>(std::nearbyint(vzNormalized));
-
-        const double a = vxNormalized - originX;
-        const double b = vyNormalized - originY;
-        const double c = vzNormalized - originZ;
-
-        auto const f = getFractionalDensityChanges(a, b, c, true, 0/*Dummy argument*/);
         const Index origin = std::make_tuple(originX, originY, originZ);
-        const Index ix = std::make_tuple(originX + sgn(a), originY, originZ);
-        const Index iy = std::make_tuple(originX, originY + sgn(b), originZ);
-        const Index iz = std::make_tuple(originX, originY, originZ + sgn(c));
 
-        const Index ex = std::make_tuple(originX - sgn(a), originY, originZ);
-        const Index ey = std::make_tuple(originX, originY - sgn(b), originZ);
-        const Index ez = std::make_tuple(originX, originY, originZ - sgn(c));
+        /*Ignoring the cases where the point is with the grid but its origin is on the face, edge 
+         * or corner because that analysis is not given in the paper*/
+        if(!isBoundaryPoint(velocityCompMax, origin)) 
+        {
+            const double a = vxNormalized - originX;
+            const double b = vyNormalized - originY;
+            const double c = vzNormalized - originZ;
 
-        const double fo = f[0];
-        const double fext = f[1];
-        const double fix = f[2];
-        const double fiy = f[3];
-        const double fiz = f[4];
+            auto const f = getFractionalDensityChanges(a, b, c, true, 0/*Dummy argument*/);
+            const Index ix = std::make_tuple(originX + sgn(a), originY, originZ);
+            const Index iy = std::make_tuple(originX, originY + sgn(b), originZ);
+            const Index iz = std::make_tuple(originX, originY, originZ + sgn(c));
 
-        fractionalDensityChanges.emplace(origin, fo);
-        fractionalDensityChanges.emplace(ix, fix);
-        fractionalDensityChanges.emplace(iy, fiy);
-        fractionalDensityChanges.emplace(iz, fiz);
-        fractionalDensityChanges.emplace(ex, fext);
-        fractionalDensityChanges.emplace(ey, fext);
-        fractionalDensityChanges.emplace(ez, fext);
+            const Index ex = std::make_tuple(originX - sgn(a), originY, originZ);
+            const Index ey = std::make_tuple(originX, originY - sgn(b), originZ);
+            const Index ez = std::make_tuple(originX, originY, originZ - sgn(c));
+
+            const double fo = f[0];
+            const double fext = f[1];
+            const double fix = f[2];
+            const double fiy = f[3];
+            const double fiz = f[4];
+
+            fractionalDensityChanges.emplace(origin, fo);
+            fractionalDensityChanges.emplace(ix, fix);
+            fractionalDensityChanges.emplace(iy, fiy);
+            fractionalDensityChanges.emplace(iz, fiz);
+            fractionalDensityChanges.emplace(ex, fext);
+            fractionalDensityChanges.emplace(ey, fext);
+            fractionalDensityChanges.emplace(ez, fext);
+        }
     }
     else
     {
