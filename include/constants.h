@@ -9,7 +9,14 @@ namespace p643
 
     inline int sgn(double x)
     {
-        return (x > 0) - (x < 0);
+        if(x >= 0)
+        {
+            return 1;
+        }
+        else
+        {
+            return -1;
+        }
     }
 
     inline Index toVelocity(const Index& i, int gridSide)

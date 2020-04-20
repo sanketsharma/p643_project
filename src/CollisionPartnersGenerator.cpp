@@ -1,6 +1,7 @@
 #include <CollisionPartnersGenerator.h>
 #include <numeric>
 #include <algorithm>
+#include <easylogging++.h>
 
 namespace p643
 {
@@ -19,13 +20,14 @@ generator(randomDevice())
 void CollisionPartnersGenerator::populateCumulativeDistributionFunction()
 {
     auto it = cumulativeDistributionFunction.begin();
+    sum = 0.0;
     for(auto it1 = distributionFunctionGrid.begin(); it1 != distributionFunctionGrid.end(); ++it1)
     {
         for(auto it2 = it1->begin(); it2 != it1->end(); ++it2)
         {
             for(auto it3 = it2->begin(); it3 != it2->end(); ++it3)
             {
-                sum += *it3;
+                sum += std::abs(*it3);
                 *it = sum;
                 ++it;
             }
@@ -58,9 +60,9 @@ std::vector<Index> CollisionPartnersGenerator::getCollisionPartners(double deple
 
         collisionPartners.emplace_back(x,y,z);
 
-        cumulativeMassFraction += distributionFunctionGrid[x][y][z]/sum;
+        cumulativeMassFraction += std::abs(distributionFunctionGrid[x][y][z]/sum);
 
-        if(cumulativeMassFraction >= depletingFraction) 
+        if(cumulativeMassFraction >= depletingFraction || collisionPartners.size() >= nV) 
         {
             break;
         }
