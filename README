@@ -1,7 +1,7 @@
 In order to run the program, please execute the following commands
 
-ssharm19@acf-login7 ~/p643/project (master)$ cd build
-ssharm19@acf-login7 ~/p643/project/build (master)$ cmake -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=Release ..
+ssharm19@acf-login7 ~/p643/outbox/project (master)$ cd build
+ssharm19@acf-login7 ~/p643/outbox/project/build (master)$ cmake -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ -DCMAKE_BUILD_TYPE=Release ..
 -- The C compiler identification is GNU 4.8.5
 -- The CXX compiler identification is GNU 4.8.5
 -- Check for working C compiler: /bin/gcc
@@ -17,8 +17,8 @@ ssharm19@acf-login7 ~/p643/project/build (master)$ cmake -DCMAKE_C_COMPILER=gcc 
 --   unit_test_framework
 -- Configuring done
 -- Generating done
--- Build files have been written to: /nics/b/home/ssharm19/p643/project/build
-ssharm19@acf-login7 ~/p643/project/build (master)$ make 
+-- Build files have been written to: /nics/b/home/ssharm19/p643/outbox/project/build
+ssharm19@acf-login7 ~/p643/outbox/project/build (master)$ make 
 Scanning dependencies of target dvmLibrary
 [  8%] Building CXX object CMakeFiles/dvmLibrary.dir/src/Cell.cpp.o
 [ 16%] Building CXX object CMakeFiles/dvmLibrary.dir/src/CollisionPartnersGenerator.cpp.o
@@ -29,7 +29,7 @@ Scanning dependencies of target dvmLibrary
 [ 58%] Building CXX object CMakeFiles/dvmLibrary.dir/src/Collider.cpp.o
 [ 66%] Building CXX object CMakeFiles/dvmLibrary.dir/src/Simulator.cpp.o
 [ 75%] Building CXX object CMakeFiles/dvmLibrary.dir/logging/easylogging++.cc.o
-/nics/b/home/ssharm19/p643/project/logging/easylogging++.cc:2187:6: warning: unused parameter ‘data’ [-Wunused-parameter]
+/nics/b/home/ssharm19/p643/outbox/project/logging/easylogging++.cc:2187:6: warning: unused parameter ‘data’ [-Wunused-parameter]
  void LogDispatchCallback::handle(const LogDispatchData* data) {
       ^
 Linking CXX static library libdvmLibrary.a
@@ -43,6 +43,8 @@ Scanning dependencies of target dvmTest
 [100%] Building CXX object CMakeFiles/dvmTest.dir/test/interpolationTest.cpp.o
 Linking CXX executable dvmTest
 [100%] Built target dvmTest
-ssharm19@acf-login7 ~/p643/project/build (master)$ ./dvm
+ssharm19@acf-login7 ~/p643/outbox/project/build (master)$ ./dvm
+2020-04-23 08:33:03,496229 Starting simulation
+2020-04-23 08:33:25,123917 Ending simulation
 
-
+The simulation output files are stored in logs/. The files with the last two timestamps correspond to the last run. 
