@@ -47,4 +47,4 @@ ssharm19@acf-login7 ~/p643/outbox/project/build (master)$ ./dvm
 2020-04-23 08:33:03,496229 Starting simulation
 2020-04-23 08:33:25,123917 Ending simulation
 
-The simulation output files are stored in logs/. The files with the last two timestamps correspond to the last run. 
+The simulation output files are stored in logs/. The files with the last two timestamps correspond to the last run. The configuration file is config/params.cfg.
