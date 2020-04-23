@@ -56,6 +56,14 @@ void Simulator::dumpData()
                             if(it != flattenedDistribution.end())
                             {
                                 flattenedDistribution[indexSquaredSum] += distributionFunctionGrid[i][j][k];
+                                if(flattenedDistribution[indexSquaredSum] == std::numeric_limits<double>::infinity())
+                                {
+                                    flattenedDistribution[indexSquaredSum] = std::numeric_limits<double>::max();
+                                }
+                                else if(flattenedDistribution[indexSquaredSum] == -std::numeric_limits<double>::infinity())
+                                {
+                                    flattenedDistribution[indexSquaredSum] = std::numeric_limits<double>::min();
+                                }
                             }
                             else
                             {
@@ -104,6 +112,10 @@ void Simulator::simulate()
                                 const double etaZ = cell.getVelocity(beta, k);
                                 const auto etaIHat = std::make_tuple(i, j, k);
                                 const auto mj = collisionPartnersGenerator.getCollisionPartners(depletingFraction);
+                                if(mj.empty())
+                                {
+                                    continue;
+                                }
                                 const std::array<double, 3> eta{{etaX, etaY, etaZ}};
                                 const double depletionAbsValue = collider.collisionDepletion(mj, etaIHat);
 

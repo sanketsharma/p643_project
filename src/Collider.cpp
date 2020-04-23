@@ -1,5 +1,7 @@
 #include <Collider.h>
 #include <easylogging++.h>
+#include <cmath>
+#include <limits>
 
 namespace p643
 {
@@ -36,11 +38,31 @@ double  Collider::collisionDepletion( const std::vector<Index>& mj,
         const int z = std::get<2>(index);
         sum += std::abs(distributionFunctionGrid[x][y][z]);
     }
+
+    if(sum == std::numeric_limits<double>::infinity())
+    {
+        sum = std::numeric_limits<double>::max();
+    }
+    else if(sum == -std::numeric_limits<double>::infinity())
+    {
+        sum = std::numeric_limits<double>::min();
+    }
+
     const int p = std::get<0>(etaIHat);
     const int q = std::get<1>(etaIHat);
     const int r = std::get<2>(etaIHat);
+    double retVal = 1.0/(2 * mj.size()) * distributionFunctionGrid[p][q][r] * deltaT * beta * beta * beta * sum;
 
-    return 1.0/(2 * mj.size()) * distributionFunctionGrid[p][q][r] * deltaT * beta * beta * beta * sum;          
+    if(retVal == std::numeric_limits<double>::infinity())
+    {
+        retVal = std::numeric_limits<double>::max();
+    }
+    else if(retVal == -std::numeric_limits<double>::infinity())
+    {
+        retVal = std::numeric_limits<double>::min();
+    }
+
+    return retVal;          
 }
 
 
@@ -54,6 +76,14 @@ void Collider::replenish(const std::map<Index, double>& replenishmentFractions, 
         int j = std::get<1>(index) + velocityGridSide/2;
         int k = std::get<2>(index) + velocityGridSide/2;
         cell.distributionFunctionGrid[i][j][k] += fraction*replenishment;
+        if(cell.distributionFunctionGrid[i][j][k] == std::numeric_limits<double>::infinity())
+        {
+            cell.distributionFunctionGrid[i][j][k] = std::numeric_limits<double>::max();
+        }
+        else if(cell.distributionFunctionGrid[i][j][k] == -std::numeric_limits<double>::infinity())
+        {
+            cell.distributionFunctionGrid[i][j][k] = std::numeric_limits<double>::min();
+        }
     }
 }
 
@@ -84,6 +114,16 @@ void Collider::processCollisions( const std::array<double, 3> eta,
         int etaIHatY = std::get<1>(etaIHat);
         int etaIHatZ = std::get<2>(etaIHat);
         cell.distributionFunctionGrid[etaIHatX][etaIHatY][etaIHatZ] -= depletion/2;
+
+        if(cell.distributionFunctionGrid[etaIHatX][etaIHatY][etaIHatZ] == std::numeric_limits<double>::infinity())
+        {
+            cell.distributionFunctionGrid[etaIHatX][etaIHatY][etaIHatZ] = std::numeric_limits<double>::max();
+        }
+        else if(cell.distributionFunctionGrid[etaIHatX][etaIHatY][etaIHatZ] == -std::numeric_limits<double>::infinity())
+        {
+            cell.distributionFunctionGrid[etaIHatX][etaIHatY][etaIHatZ] = std::numeric_limits<double>::min();
+        }
+
         const double replenishmentEta = depletion/2;
         replenish(replenishmentFractionsEta, replenishmentEta); 
         ++collisionCount;
@@ -95,6 +135,16 @@ void Collider::processCollisions( const std::array<double, 3> eta,
     if(!replenishmentFractionsZeta.empty())//In case no replenishment is done we won't do depletion as well
     {
         cell.distributionFunctionGrid[zetaIHatX][zetaIHatY][zetaIHatZ] -= depletion/2;
+
+        if(cell.distributionFunctionGrid[zetaIHatX][zetaIHatY][zetaIHatZ] == std::numeric_limits<double>::infinity())
+        {
+            cell.distributionFunctionGrid[zetaIHatX][zetaIHatY][zetaIHatZ] = std::numeric_limits<double>::max();
+        }
+        else if(cell.distributionFunctionGrid[zetaIHatX][zetaIHatY][zetaIHatZ] == -std::numeric_limits<double>::infinity())
+        {
+            cell.distributionFunctionGrid[zetaIHatX][zetaIHatY][zetaIHatZ] = std::numeric_limits<double>::min();
+        }
+
         const double replenishmentZeta = depletion/2;
         replenish(replenishmentFractionsZeta, replenishmentZeta);
     }
