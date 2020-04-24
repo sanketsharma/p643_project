@@ -26,16 +26,17 @@ double  Collider::collisionDepletion( const std::vector<Index>& mj,
 {
     const std::vector<std::vector<std::vector<double>>>& distributionFunctionGrid = cell.distributionFunctionGrid;
     double sum = 0.0;
+    double phiHatEtaIHat = 0.0;
     for(const auto& index : mj)
     {
-        if(index == etaIHat)
-        {
-            continue;
-        }
-
         const int x = std::get<0>(index);
         const int y = std::get<1>(index);
         const int z = std::get<2>(index);
+
+        if(index == etaIHat)
+        {
+            phiHatEtaIHat = std::abs(distributionFunctionGrid[x][y][z]);
+        }
         sum += std::abs(distributionFunctionGrid[x][y][z]);
     }
 
@@ -51,7 +52,7 @@ double  Collider::collisionDepletion( const std::vector<Index>& mj,
     const int p = std::get<0>(etaIHat);
     const int q = std::get<1>(etaIHat);
     const int r = std::get<2>(etaIHat);
-    double retVal = 1.0/(2 * mj.size()) * distributionFunctionGrid[p][q][r] * deltaT * beta * beta * beta * sum;
+    double retVal = 1.0/(2 * sum) * distributionFunctionGrid[p][q][r] * deltaT * beta * beta * beta * (sum - phiHatEtaIHat);
 
     if(retVal == std::numeric_limits<double>::infinity())
     {
