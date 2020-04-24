@@ -30,8 +30,6 @@ class Collider
     const double beta;
     const double deltaT;
     const int velocityGridSide;
-    int totalCount;
-    int collisionCount;
 };
 }
 

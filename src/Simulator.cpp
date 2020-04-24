@@ -56,14 +56,6 @@ void Simulator::dumpData()
                             if(it != flattenedDistribution.end())
                             {
                                 flattenedDistribution[indexSquaredSum] += distributionFunctionGrid[i][j][k];
-                                if(flattenedDistribution[indexSquaredSum] == std::numeric_limits<double>::infinity())
-                                {
-                                    flattenedDistribution[indexSquaredSum] = std::numeric_limits<double>::max();
-                                }
-                                else if(flattenedDistribution[indexSquaredSum] == -std::numeric_limits<double>::infinity())
-                                {
-                                    flattenedDistribution[indexSquaredSum] = std::numeric_limits<double>::min();
-                                }
                             }
                             else
                             {

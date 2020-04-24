@@ -1,5 +1,4 @@
 #include <CollisionPartnersGenerator.h>
-#include <numeric>
 #include <algorithm>
 #include <easylogging++.h>
 
@@ -28,14 +27,6 @@ void CollisionPartnersGenerator::populateCumulativeDistributionFunction()
             for(auto it3 = it2->begin(); it3 != it2->end(); ++it3)
             {
                 sum += std::abs(*it3);
-                if(sum == std::numeric_limits<double>::infinity())
-                {
-                    sum = std::numeric_limits<double>::max();
-                }
-                else if(sum == -std::numeric_limits<double>::infinity())
-                {
-                    sum = std::numeric_limits<double>::min();
-                }
                 *it = sum;
                 ++it;
             }
